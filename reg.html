@@ -29,9 +29,15 @@
             <a href="reg.html"><button class="auth-tab auth-tab--active" data-tab="register">Регистрация</button></a>
           </div>
 
-          <!-- Вход -->
-          <form class="form" id="loginForm" novalidate>
-            <h2 class="form__title">Вход в аккаунт</h2>
+          <!-- Регистрация -->
+          <form class="form" id="registerForm" novalidate hidden>
+            <h2 class="form__title">Создать аккаунт</h2>
+
+            <label class="form__field">
+              <span>Имя</span>
+              <input type="text" name="name" placeholder="Иван" required minlength="2">
+              <small class="form__error"></small>
+            </label>
 
             <label class="form__field">
               <span>Email</span>
@@ -41,14 +47,18 @@
 
             <label class="form__field">
               <span>Пароль</span>
-              <input type="password" name="password" placeholder="••••••" required minlength="6">
+              <input type="password" name="password" placeholder="Минимум 6 символов" required minlength="6">
               <small class="form__error"></small>
             </label>
 
-            <button type="submit" class="btn btn--primary btn--full">Войти</button>
-            <p class="form__hint">Нет аккаунта? <a href="#" data-switch="register">Зарегистрируйтесь</a></p>
-          </form>
+            <label class="form__field">
+              <span>Повторите пароль</span>
+              <input type="password" name="confirm" placeholder="••••••" required minlength="6">
+              <small class="form__error"></small>
+            </label>
 
+            <button type="submit" class="btn btn--primary btn--full">Зарегистрироваться</button>
+            <p class="form__hint">Уже есть аккаунт? <a href="#" data-switch="login">Войдите</a></p>
           </form>
         </div>
       </div>
