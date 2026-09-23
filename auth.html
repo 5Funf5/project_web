@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Онлайн-библиотека — Вход</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="header">
+    <div class="container header__inner">
+      <a href="index.html" class="logo">📚 БиблиоТека</a>
+      <nav class="nav">
+        <a href="index.html" class="nav__link">Главная</a>
+        <a href="catalog.html" class="nav__link">Каталог</a>
+      </nav>
+      <button class="burger" id="burger" aria-label="Меню">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <main>
+    <section class="section auth-section">
+      <div class="container">
+        <div class="auth-card">
+          <div class="auth-tabs">
+            <button class="auth-tab auth-tab--active" data-tab="login">Вход</button>
+            <button class="auth-tab" data-tab="register">Регистрация</button>
+          </div>
+
+          <!-- Вход -->
+          <form class="form" id="loginForm" novalidate>
+            <h2 class="form__title">Вход в аккаунт</h2>
+
+            <label class="form__field">
+              <span>Email</span>
+              <input type="email" name="email" placeholder="you@example.com" required>
+              <small class="form__error"></small>
+            </label>
+
+            <label class="form__field">
+              <span>Пароль</span>
+              <input type="password" name="password" placeholder="••••••" required minlength="6">
+              <small class="form__error"></small>
+            </label>
+
+            <button type="submit" class="btn btn--primary btn--full">Войти</button>
+            <p class="form__hint">Нет аккаунта? <a href="#" data-switch="register">Зарегистрируйтесь</a></p>
+          </form>
+
+          <!-- Регистрация -->
+          <form class="form" id="registerForm" novalidate hidden>
+            <h2 class="form__title">Создать аккаунт</h2>
+
+            <label class="form__field">
+              <span>Имя</span>
+              <input type="text" name="name" placeholder="Иван" required minlength="2">
+              <small class="form__error"></small>
+            </label>
+
+            <label class="form__field">
+              <span>Email</span>
+              <input type="email" name="email" placeholder="you@example.com" required>
+              <small class="form__error"></small>
+            </label>
+
+            <label class="form__field">
+              <span>Пароль</span>
+              <input type="password" name="password" placeholder="Минимум 6 символов" required minlength="6">
+              <small class="form__error"></small>
+            </label>
+
+            <label class="form__field">
+              <span>Повторите пароль</span>
+              <input type="password" name="confirm" placeholder="••••••" required minlength="6">
+              <small class="form__error"></small>
+            </label>
+
+            <button type="submit" class="btn btn--primary btn--full">Зарегистрироваться</button>
+            <p class="form__hint">Уже есть аккаунт? <a href="#" data-switch="login">Войдите</a></p>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer__inner">
+      <p>© 2025 БиблиоТека. Все права защищены.</p>
+      <p>Сделано с ❤ для любителей чтения</p>
+    </div>
+  </footer>
+
+  <script src="js/script.js"></script>
+</body>
+</html>

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Онлайн-библиотека — Каталог</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="header">
+    <div class="container header__inner">
+      <a href="index.html" class="logo">📚 БиблиоТека</a>
+      <nav class="nav">
+        <a href="index.html" class="nav__link">Главная</a>
+        <a href="catalog.html" class="nav__link nav__link--active">Каталог</a>
+        <a href="auth.html" class="nav__link nav__link--btn" id="authLink">Войти</a>
+      </nav>
+      <button class="burger" id="burger" aria-label="Меню">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <main>
+    <section class="section">
+      <div class="container">
+        <h1 class="section__title">Каталог книг</h1>
+
+        <div class="filters">
+          <input
+            type="text"
+            id="searchInput"
+            class="filters__search"
+            placeholder="Поиск по названию или автору..."
+          >
+          <select id="genreSelect" class="filters__select">
+            <option value="">Все жанры</option>
+          </select>
+          <select id="sortSelect" class="filters__select">
+            <option value="default">Сортировка</option>
+            <option value="title">По названию</option>
+            <option value="year">По году</option>
+          </select>
+        </div>
+
+        <div class="cards" id="catalogBooks"></div>
+        <p class="empty" id="emptyMsg" hidden>Ничего не найдено 🔍</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer__inner">
+      <p>© 2025 БиблиоТека. Все права защищены.</p>
+      <p>Сделано с ❤ для любителей чтения</p>
+    </div>
+  </footer>
+
+  <script src="js/script.js"></script>
+</body>
+</html>
