@@ -149,3 +149,16 @@ function initCatalogPage() {
 
   render();
 }
+
+
+
+/* ============================================================
+   Инициализация
+   ============================================================ */
+document.addEventListener('DOMContentLoaded', () => {
+  initBurger();
+  initHomePage();
+  initCatalogPage();
+  initAuthPage();
+  updateAuthLink();
+});
