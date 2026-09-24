@@ -30,26 +30,26 @@
           </div>
 
           <!-- Вход -->
-          <form class="form" id="loginForm" novalidate>
+          <div class="form" id="loginForm" hidden>
             <h2 class="form__title">Вход в аккаунт</h2>
 
+            <div class="form__alert" id="loginAlert" role="alert" hidden></div>
+
             <label class="form__field">
-              <span>Email</span>
-              <input type="email" name="email" placeholder="you@example.com" required>
+              <span>Email <b class="req">*</b></span>
+              <input type="email" id="loginEmail" placeholder="you@example.com">
               <small class="form__error"></small>
             </label>
 
             <label class="form__field">
-              <span>Пароль</span>
-              <input type="password" name="password" placeholder="••••••" required minlength="6">
+              <span>Пароль <b class="req">*</b></span>
+              <input type="password" id="loginPassword" placeholder="••••••••">
               <small class="form__error"></small>
             </label>
 
-            <button type="submit" class="btn btn--primary btn--full">Войти</button>
+            <button type="button" class="btn btn--primary btn--full" id="loginBtn">Войти</button>
             <p class="form__hint">Нет аккаунта? <a href="#" data-switch="register">Зарегистрируйтесь</a></p>
-          </form>
-
-          </form>
+          </div>
         </div>
       </div>
     </section>

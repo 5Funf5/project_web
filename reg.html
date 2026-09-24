@@ -29,40 +29,43 @@
             <a href="reg.html"><button class="auth-tab auth-tab--active" data-tab="register">Регистрация</button></a>
           </div>
 
-          <!-- Регистрация -->
-<form class="form" id="registerForm" novalidate>
-  <h2 class="form__title">Создать аккаунт</h2>
+          <div class="auth-card">
 
-  <!-- Общая область сообщений формы -->
-  <div class="form__alert" id="registerAlert" role="alert" hidden></div>
 
-  <label class="form__field">
-    <span>Имя <b class="req">*</b></span>
-    <input type="text" name="name" placeholder="Иван" required minlength="2">
-    <small class="form__error" data-error-for="name"></small>
-  </label>
+  <!-- ==================== РЕГИСТРАЦИЯ ==================== -->
+  <div class="form" id="registerForm">
+    <h2 class="form__title">Создать аккаунт</h2>
 
-  <label class="form__field">
-    <span>Email <b class="req">*</b></span>
-    <input type="email" name="email" placeholder="you@example.com" required>
-    <small class="form__error" data-error-for="email"></small>
-  </label>
+    <div class="form__alert" id="registerAlert" role="alert" hidden></div>
 
-  <label class="form__field">
-    <span>Пароль <b class="req">*</b></span>
-    <input type="password" name="password" placeholder="Минимум 8 символов" required minlength="8">
-    <small class="form__error" data-error-for="password"></small>
-  </label>
+    <label class="form__field">
+      <span>Имя <b class="req">*</b></span>
+      <input type="text" id="regName" placeholder="Иван">
+      <small class="form__error"></small>
+    </label>
 
-  <label class="form__field">
-    <span>Повторите пароль <b class="req">*</b></span>
-    <input type="password" name="confirm" placeholder="••••••••" required minlength="8">
-    <small class="form__error" data-error-for="confirm"></small>
-  </label>
+    <label class="form__field">
+      <span>Email <b class="req">*</b></span>
+      <input type="email" id="regEmail" placeholder="you@example.com">
+      <small class="form__error"></small>
+    </label>
 
-  <button type="submit" class="btn btn--primary btn--full">Зарегистрироваться</button>
-  <p class="form__hint">Уже есть аккаунт? <a href="#" data-switch="login">Войдите</a></p>
-</form>
+    <label class="form__field">
+      <span>Пароль <b class="req">*</b></span>
+      <input type="password" id="regPassword" placeholder="Минимум 8 символов">
+      <small class="form__error"></small>
+    </label>
+
+    <label class="form__field">
+      <span>Повторите пароль <b class="req">*</b></span>
+      <input type="password" id="regConfirm" placeholder="••••••••">
+      <small class="form__error"></small>
+    </label>
+
+    <button type="button" class="btn btn--primary btn--full" id="registerBtn">Зарегистрироваться</button>
+    <p class="form__hint">Уже есть аккаунт? <a href="#" data-switch="login">Войдите</a></p>
+  </div>
+</div>
         </div>
       </div>
     </section>

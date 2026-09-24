@@ -150,7 +150,293 @@ function initCatalogPage() {
   render();
 }
 
+/* ============================================================
+   Страница авторизации: вкладки + ручная валидация (без <form>)
+   ============================================================ */
+function initAuthPage() {
+  const loginForm    = $('#loginForm');
+  const registerForm = $('#registerForm');
+  
 
+
+  /* ---------- Переключение вкладок ---------- */
+  const tabs = $$('.auth-tab');
+
+  function switchTab(name) {
+    tabs.forEach(t => t.classList.toggle('auth-tab--active', t.dataset.tab === name));
+    loginForm.hidden    = name !== 'login';
+    registerForm.hidden = name !== 'register';
+  }
+
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => switchTab(tab.dataset.tab));
+  });
+
+  $$('[data-switch]').forEach(link => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      switchTab(link.dataset.switch);
+    });
+  });
+
+  /* ============================================================
+     Ссылки на элементы
+     ============================================================ */
+  const regName     = $('#regName');
+  const regEmail    = $('#regEmail');
+  const regPassword = $('#regPassword');
+  const regConfirm  = $('#regConfirm');
+  const registerBtn = $('#registerBtn');
+  const registerAlert = $('#registerAlert');
+
+  const loginEmail    = $('#loginEmail');
+  const loginPassword = $('#loginPassword');
+  const loginBtn      = $('#loginBtn');
+  const loginAlert    = $('#loginAlert');
+
+  /* ============================================================
+     Утилиты
+     ============================================================ */
+
+  // Проверка формата email
+  const EMAIL_RE = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+  /**
+   * Устанавливает сообщение об ошибке под конкретным полем.
+   * @param {HTMLInputElement} input
+   * @param {string} message — '' означает «ошибки нет»
+   */
+  function setFieldError(input, message) {
+    const field   = input.closest('.form__field');
+    const errorEl = field.querySelector('.form__error');
+
+    if (message) {
+      input.classList.add('input--error');
+      input.classList.remove('input--valid');
+      errorEl.textContent = message;
+    } else {
+      input.classList.remove('input--error');
+      input.classList.toggle('input--valid', input.value.trim() !== '');
+      errorEl.textContent = '';
+    }
+  }
+
+  /**
+   * Показывает общее сообщение над формой.
+   */
+  function setFormAlert(alertEl, type, text) {
+    alertEl.hidden = false;
+    alertEl.className = `form__alert form__alert--${type}`;
+    alertEl.textContent = text;
+  }
+
+  function hideFormAlert(alertEl) {
+    alertEl.hidden = true;
+    alertEl.textContent = '';
+  }
+
+  /* ============================================================
+     ВАЛИДАЦИЯ РЕГИСТРАЦИИ
+     ============================================================ */
+
+  /**
+   * Проверяет форму регистрации.
+   * @returns {boolean} true — всё корректно
+   */
+  function validateRegister() {
+    let isValid = true;
+    let firstInvalid = null;
+
+    // 1) Имя — обязательное, минимум 2 символа
+    const nameVal = regName.value.trim();
+    if (!nameVal) {
+      setFieldError(regName, 'Укажите имя');
+      isValid = false;
+      firstInvalid = firstInvalid || regName;
+    } else if (nameVal.length < 2) {
+      setFieldError(regName, 'Имя должно содержать минимум 2 символа');
+      isValid = false;
+      firstInvalid = firstInvalid || regName;
+    } else {
+      setFieldError(regName, '');
+    }
+
+    // 2) Email — обязательный + корректный формат
+    const emailVal = regEmail.value.trim();
+    if (!emailVal) {
+      setFieldError(regEmail, 'Укажите email');
+      isValid = false;
+      firstInvalid = firstInvalid || regEmail;
+    } else if (!EMAIL_RE.test(emailVal)) {
+      setFieldError(regEmail, 'Введите корректный email, например user@mail.ru');
+      isValid = false;
+      firstInvalid = firstInvalid || regEmail;
+    } else {
+      setFieldError(regEmail, '');
+    }
+
+    // 3) Пароль — обязательный, не менее 8 символов
+    const passVal = regPassword.value;
+    if (!passVal) {
+      setFieldError(regPassword, 'Укажите пароль');
+      isValid = false;
+      firstInvalid = firstInvalid || regPassword;
+    } else if (passVal.length < 8) {
+      setFieldError(regPassword, 'Пароль должен содержать не менее 8 символов');
+      isValid = false;
+      firstInvalid = firstInvalid || regPassword;
+    } else {
+      setFieldError(regPassword, '');
+    }
+
+    // 4) Повтор пароля — обязательный + совпадает с паролем
+    const confirmVal = regConfirm.value;
+    if (!confirmVal) {
+      setFieldError(regConfirm, 'Повторите пароль');
+      isValid = false;
+      firstInvalid = firstInvalid || regConfirm;
+    } else if (confirmVal !== passVal) {
+      setFieldError(regConfirm, 'Пароли не совпадают');
+      isValid = false;
+      firstInvalid = firstInvalid || regConfirm;
+    } else {
+      setFieldError(regConfirm, '');
+    }
+
+    // Общее сообщение
+    if (!isValid) {
+      setFormAlert(registerAlert, 'error', 'Форма содержит ошибки. Исправьте выделенные поля.');
+      if (firstInvalid) firstInvalid.focus();
+    } else {
+      hideFormAlert(registerAlert);
+    }
+
+    return isValid;
+  }
+
+  /* ============================================================
+     Обработчик кнопки «Зарегистрироваться»
+     ============================================================ */
+  registerBtn.addEventListener('click', () => {
+    // Валидация ДО любой дальнейшей обработки
+    if (!validateRegister()) {
+      return; // данные никуда не уходят
+    }
+
+    // ---- Успешная отправка ----
+    const user = {
+      name:  regName.value.trim(),
+      email: regEmail.value.trim()
+    };
+    localStorage.setItem('libraryUser', JSON.stringify(user));
+    updateAuthLink();
+
+    setFormAlert(registerAlert, 'success', `Аккаунт создан. Добро пожаловать, ${user.name}!`);
+
+    // Очистка полей и подсветки
+    [regName, regEmail, regPassword, regConfirm].forEach(input => {
+      input.value = '';
+      input.classList.remove('input--error', 'input--valid');
+      const err = input.closest('.form__field').querySelector('.form__error');
+      err.textContent = '';
+    });
+
+    // Скрыть плашку успеха через 4 сек
+    setTimeout(() => hideFormAlert(registerAlert), 4000);
+  });
+
+  /* ============================================================
+     Живая перепроверка при вводе — чтобы после исправления
+     пользователь сразу видел, что поле стало валидным
+     ============================================================ */
+  regName.addEventListener('input', () => {
+    if (regName.value.trim().length >= 2) setFieldError(regName, '');
+  });
+
+  regEmail.addEventListener('input', () => {
+    if (EMAIL_RE.test(regEmail.value.trim())) setFieldError(regEmail, '');
+  });
+
+  regPassword.addEventListener('input', () => {
+    if (regPassword.value.length >= 8) setFieldError(regPassword, '');
+    // Если повтор уже введён — перепроверим совпадение
+    if (regConfirm.value) {
+      if (regConfirm.value === regPassword.value) {
+        setFieldError(regConfirm, '');
+      } else {
+        setFieldError(regConfirm, 'Пароли не совпадают');
+      }
+    }
+  });
+
+  regConfirm.addEventListener('input', () => {
+    if (regConfirm.value && regConfirm.value === regPassword.value) {
+      setFieldError(regConfirm, '');
+    } else if (regConfirm.value) {
+      setFieldError(regConfirm, 'Пароли не совпадают');
+    }
+  });
+
+  /* ============================================================
+     Вход — аналогично, по клику
+     ============================================================ */
+  loginBtn.addEventListener('click', () => {
+    let isValid = true;
+    let firstInvalid = null;
+
+    const emailVal = loginEmail.value.trim();
+    if (!emailVal) {
+      setFieldError(loginEmail, 'Укажите email');
+      isValid = false;
+      firstInvalid = firstInvalid || loginEmail;
+    } else if (!EMAIL_RE.test(emailVal)) {
+      setFieldError(loginEmail, 'Некорректный email');
+      isValid = false;
+      firstInvalid = firstInvalid || loginEmail;
+    } else {
+      setFieldError(loginEmail, '');
+    }
+
+    const passVal = loginPassword.value;
+    if (!passVal) {
+      setFieldError(loginPassword, 'Укажите пароль');
+      isValid = false;
+      firstInvalid = firstInvalid || loginPassword;
+    } else if (passVal.length < 8) {
+      setFieldError(loginPassword, 'Пароль должен содержать не менее 8 символов');
+      isValid = false;
+      firstInvalid = firstInvalid || loginPassword;
+    } else {
+      setFieldError(loginPassword, '');
+    }
+
+    if (!isValid) {
+      setFormAlert(loginAlert, 'error', 'Проверьте правильность введённых данных.');
+      if (firstInvalid) firstInvalid.focus();
+      return;
+    }
+
+    const user = {
+      email: emailVal,
+      name:  emailVal.split('@')[0]
+    };
+    localStorage.setItem('libraryUser', JSON.stringify(user));
+    updateAuthLink();
+
+    setFormAlert(loginAlert, 'success', `Добро пожаловать, ${user.name}!`);
+    loginEmail.value = '';
+    loginPassword.value = '';
+    [loginEmail, loginPassword].forEach(i => i.classList.remove('input--error', 'input--valid'));
+    setTimeout(() => hideFormAlert(loginAlert), 4000);
+  });
+
+  loginEmail.addEventListener('input', () => {
+    if (EMAIL_RE.test(loginEmail.value.trim())) setFieldError(loginEmail, '');
+  });
+  loginPassword.addEventListener('input', () => {
+    if (loginPassword.value.length >= 8) setFieldError(loginPassword, '');
+  });
+}
 
 /* ============================================================
    Инициализация
