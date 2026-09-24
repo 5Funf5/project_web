@@ -608,3 +608,45 @@ button {
     text-align: center;
   }
 }
+
+/* Обязательное поле — звёздочка */
+.req {
+  color: var(--color-error);
+  font-weight: 700;
+}
+
+/* Общая плашка сообщений формы */
+.form__alert {
+  font-family: 'Segoe UI', Tahoma, sans-serif;
+  font-size: 0.9rem;
+  padding: 12px 14px;
+  border-radius: var(--radius-sm);
+  line-height: 1.4;
+}
+
+.form__alert--error {
+  background: rgba(192, 57, 43, 0.08);
+  border: 1px solid rgba(192, 57, 43, 0.3);
+  color: var(--color-error);
+}
+
+.form__alert--success {
+  background: rgba(46, 125, 50, 0.08);
+  border: 1px solid rgba(46, 125, 50, 0.3);
+  color: var(--color-success);
+}
+
+/* Поле с ошибкой */
+.form__field input.input--error {
+  border-color: var(--color-error);
+  background: rgba(192, 57, 43, 0.04);
+}
+
+.form__field input.input--error:focus {
+  box-shadow: 0 0 0 3px rgba(192, 57, 43, 0.15);
+}
+
+/* Поле без ошибки (после исправления) */
+.form__field input.input--valid {
+  border-color: var(--color-success);
+}
