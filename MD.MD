@@ -1,284 +1,86 @@
+# Предисловие
+Данный код проекта был написан полностью с ИИ, в связи обстоятельств которые произошли на фоне. Это не означает что я не знаю кода, наоборот - я его понимаю, но осознанно иду на этот шаг в целях экономии времени.
+# Использовавшиеся промпты
+- *Проект: онлайн-библиотека Задача: Написать с нуля проект, используя HTML-CSS-JS. Страницы, стили и код JS должен быть на отдельных файлах. Не использовать интернет стили. Структура страницы следующая: Главная страница, страница каталога, страница регистрации и входа.*
+- *При отправке формы регистрации JavaScript должен проверить введенные данные до их дальнейшей обработки. 
+	  • Все обязательные поля заполнены. 
+	  • Email имеет корректный формат. 
+	  • Пароль содержит не менее 8 символов. 
+	  • Значения полей «Пароль» и «Повтор пароля» совпадают. 
+	  • При наличии ошибок форма не должна считаться успешно отправленной. 
+	  • Сообщения об ошибках должны быть понятны и отображаться рядом с соответствующим полем либо в очевидной области формы. 
+	  • После исправления данных пользователь должен иметь возможность повторно пройти проверку.*
+- *твоя форма не работает. Убери из регистрации form и переделай код в соответсвии с требованием*
 
-/* ============================================================
-   Страница авторизации: вкладки + валидация
-   ============================================================ */
-function initAuthPage() {
-  const loginForm    = $('#loginForm');
-  const registerForm = $('#registerForm');
-  if (!loginForm || !registerForm) return;
+# Объяснение кода
+## HTML
+### Base.html
+Страница болванка с header и footer для дальнейшей реализации на стороне backend'а на flask/django. 
+Решения:
+- импорт css, js
+- реализация навигации с последующим бургер меню при выборе режима телефона
 
-  /* ---------- Переключение вкладок ---------- */
-  const tabs = $$('.auth-tab');
+### index.html
+Стандартная основная страница с небольшими дизайнерскими решениями
+Решения:
+- Ссылки на каталог
+- Плавная анимация подсчета статистики
+- Список популярных книг
 
-  function switchTab(name) {
-    tabs.forEach(t => t.classList.toggle('auth-tab--active', t.dataset.tab === name));
-    loginForm.hidden    = name !== 'login';
-    registerForm.hidden = name !== 'register';
-    clearFormMessages(loginForm);
-    clearFormMessages(registerForm);
-  }
+### catalog.html
+Страница каталог с возможностью поиска книг
+Решения:
+- Возможность поиска книг по названию
+- Сортировка по жанрам, названиям и году выпуска
+- Реализация самих книг в формате функции в JS(временное решение)
 
-  tabs.forEach(tab => {
-    tab.addEventListener('click', () => switchTab(tab.dataset.tab));
-  });
+### auth.html и reg.html
+Страница входа и регистрации, написанный под требования
+Решения:
+- Реализация функционала на уровне js(временное решение, замена в бекэнде)
+- Переход по ссылкам для выбора страницы регистрации и входа
+- Реализация проверки полей в разделе регистрации
+- Система входа не работает про временным соображениям
+## CSS
+Решения:
+- Реализация адаптива на телефон
+- Отсутствие пользовательских/онлайн стилей
 
-  $$('[data-switch]').forEach(link => {
-    link.addEventListener('click', (e) => {
-      e.preventDefault();
-      switchTab(link.dataset.switch);
-    });
-  });
+## JS
+Решения:
+- Инициализация кода с одной точкой входа
+- Реализация каталога
+- Запуск анимации подсчета статистики
+- Реализации системы поиска и фильтров
+- Реализация проверки правильности пароля
 
-  /* ============================================================
-     Утилиты валидации
-     ============================================================ */
+# Примерные ответы на вопросы в защите
+1. HTML - структура
+   CSS - стили
+   JS - интерактивность
+2. ID - для одного элемента
+   Class - для многих
+3. интерфейс для представления html документа в виде древа объектов
+4. из поля value
+5. событие для отправки form
+6. для отмены поведения браузера
+7. клиентская - быстрота
+   серверная - безопасность
+8. посредством использования @media с ограничением на максимальную ширину
+9. В моем случае - это код внутри js с отправкой разметки
 
-  // Регулярное выражение для email
-  const EMAIL_RE = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-
-  /**
-   * Устанавливает/снимает ошибку у конкретного поля.
-   * @param {HTMLInputElement} input
-   * @param {string} message — текст ошибки ('' = нет ошибки)
-   */
-  function setFieldError(input, message) {
-    const field   = input.closest('.form__field');
-    const errorEl = field.querySelector('.form__error');
-
-    if (message) {
-      input.classList.add('input--error');
-      input.classList.remove('input--valid');
-      input.setAttribute('aria-invalid', 'true');
-      if (errorEl) errorEl.textContent = message;
-    } else {
-      input.classList.remove('input--error');
-      // Зелёная рамка только если поле не пустое
-      input.classList.toggle('input--valid', input.value.trim() !== '');
-      input.removeAttribute('aria-invalid');
-      if (errorEl) errorEl.textContent = '';
-    }
-  }
-
-  /**
-   * Показывает общее сообщение формы (плашка сверху).
-   * @param {HTMLFormElement} form
-   * @param {'error'|'success'} type
-   * @param {string} text
-   */
-  function setFormAlert(form, type, text) {
-    const alertEl = form.querySelector('.form__alert');
-    if (!alertEl) return;
-    alertEl.hidden = false;
-    alertEl.className = `form__alert form__alert--${type}`;
-    alertEl.textContent = text;
-  }
-
-  /** Убирает общую плашку и все ошибки формы. */
-  function clearFormMessages(form) {
-    const alertEl = form.querySelector('.form__alert');
-    if (alertEl) {
-      alertEl.hidden = true;
-      alertEl.textContent = '';
-    }
-    $$('input', form).forEach(input => setFieldError(input, ''));
-  }
-
-  /* ============================================================
-     Правила проверки полей
-     ============================================================ */
-  const rules = {
-    name: (v) => {
-      const val = v.trim();
-      if (!val)            return 'Укажите имя';
-      if (val.length < 2)  return 'Имя должно содержать минимум 2 символа';
-      return '';
-    },
-    email: (v) => {
-      const val = v.trim();
-      if (!val)                  return 'Укажите email';
-      if (!EMAIL_RE.test(val))   return 'Введите корректный email, например user@mail.ru';
-      return '';
-    },
-    password: (v) => {
-      if (!v)                return 'Укажите пароль';
-      if (v.length < 8)      return 'Пароль должен содержать не менее 8 символов';
-      return '';
-    },
-    confirm: (v, form) => {
-      if (!v)                                return 'Повторите пароль';
-      if (v !== form.password.value)         return 'Пароли не совпадают';
-      return '';
-    }
-  };
-
-  /**
-   * Проверяет одно поле и возвращает true, если оно валидно.
-   */
-  function validateField(form, name) {
-    const input = form[name];
-    if (!input) return true;
-    const message = rules[name](input.value, form);
-    setFieldError(input, message);
-    return message === '';
-  }
-
-  /**
-   * Проверяет всю форму регистрации.
-   * @returns {boolean} — true, если все поля валидны
-   */
-  function validateRegisterForm(form) {
-    const fields = ['name', 'email', 'password', 'confirm'];
-    let firstInvalid = null;
-    let valid = true;
-
-    fields.forEach(name => {
-      const ok = validateField(form, name);
-      if (!ok) {
-        valid = false;
-        if (!firstInvalid) firstInvalid = form[name];
-      }
-    });
-
-    if (!valid) {
-      setFormAlert(form, 'error', 'Форма содержит ошибки. Исправьте выделенные поля.');
-      if (firstInvalid) firstInvalid.focus();
-    } else {
-      const alertEl = form.querySelector('.form__alert');
-      if (alertEl) alertEl.hidden = true;
-    }
-
-    return valid;
-  }
-
-  /* ============================================================
-     Живая перепроверка после исправления
-     — как только пользователь меняет поле, ошибка снимается/обновляется
-     ============================================================ */
-  ['name', 'email', 'password', 'confirm'].forEach(name => {
-    const input = registerForm[name];
-    if (!input) return;
-
-    // Проверка «на лету» после того, как поле уже было тронуто
-    input.addEventListener('blur', () => {
-      if (input.value !== '' || input.dataset.touched === '1') {
-        input.dataset.touched = '1';
-        validateField(registerForm, name);
-        // Если поле "confirm" — перепроверим и его при смене пароля
-        if (name === 'password' && registerForm.confirm.value) {
-          validateField(registerForm, 'confirm');
-        }
-      }
-    });
-
-    // При вводе — сбрасываем ошибку, если поле стало валидным
-    input.addEventListener('input', () => {
-      input.dataset.touched = '1';
-      validateField(registerForm, name);
-      if (name === 'password' && registerForm.confirm.value) {
-        validateField(registerForm, 'confirm');
-      }
-    });
-  });
-
-  /* ============================================================
-     Отправка формы регистрации
-     ============================================================ */
-  registerForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-
-    // Валидация до любой дальнейшей обработки
-    if (!validateRegisterForm(registerForm)) {
-      return; // форма НЕ считается успешно отправленной
-    }
-
-    // ---- Здесь можно отправлять данные на сервер ----
-    const user = {
-      name:  registerForm.name.value.trim(),
-      email: registerForm.email.value.trim()
-    };
-    localStorage.setItem('libraryUser', JSON.stringify(user));
-    updateAuthLink();
-
-    setFormAlert(registerForm, 'success', `Аккаунт создан. Добро пожаловать, ${user.name}!`);
-
-    // Очистка формы и подсветки
-    registerForm.reset();
-    $$('input', registerForm).forEach(input => {
-      input.classList.remove('input--error', 'input--valid');
-      input.removeAttribute('aria-invalid');
-      delete input.dataset.touched;
-      const err = input.closest('.form__field')?.querySelector('.form__error');
-      if (err) err.textContent = '';
-    });
-
-    // Через 4 сек убираем плашку успеха
-    setTimeout(() => {
-      const alertEl = registerForm.querySelector('.form__alert');
-      if (alertEl) alertEl.hidden = true;
-    }, 4000);
-  });
-
-  /* ============================================================
-     Отправка формы входа (оставляем прежнюю логику)
-     ============================================================ */
-  loginForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-
-    let valid = true;
-    const email = loginForm.email;
-    const password = loginForm.password;
-
-    const emailErr = !email.value.trim()
-      ? 'Укажите email'
-      : !EMAIL_RE.test(email.value.trim())
-        ? 'Некорректный email'
-        : '';
-    setFieldError(email, emailErr);
-    if (emailErr) valid = false;
-
-    const passErr = !password.value
-      ? 'Укажите пароль'
-      : password.value.length < 8
-        ? 'Пароль должен содержать не менее 8 символов'
-        : '';
-    setFieldError(password, passErr);
-    if (passErr) valid = false;
-
-    if (!valid) {
-      setFormAlert(loginForm, 'error', 'Проверьте правильность введённых данных.');
-      return;
-    }
-
-    const user = {
-      email: email.value.trim(),
-      name:  email.value.split('@')[0]
-    };
-    localStorage.setItem('libraryUser', JSON.stringify(user));
-    updateAuthLink();
-    setFormAlert(loginForm, 'success', `Добро пожаловать, ${user.name}!`);
-    loginForm.reset();
-  });
-
-  // Сброс ошибок у формы входа при вводе
-  ['email', 'password'].forEach(name => {
-    const input = loginForm[name];
-    if (!input) return;
-    input.addEventListener('input', () => {
-      if (input.classList.contains('input--error')) {
-        const err = rules[name](input.value, loginForm);
-        setFieldError(input, err);
-      }
-    });
-  });
-}
-
-/* ============================================================
-   Инициализация
-   ============================================================ */
-document.addEventListener('DOMContentLoaded', () => {
-  initBurger();
-  initHomePage();
-  initCatalogPage();
-  initAuthPage();
-  updateAuthLink();
-});
+# Вопросы для самопроверки
+- [x] ☐ Выбранная предметная область понятна по интерфейсу проекта.
+- [x] ☐ Есть главная страница, каталог, регистрация и авторизация.
+- [x] ☐ В каталоге не менее 6 объектов.
+- [x] ☐ Навигация между основными страницами работает.
+- [x] ☐ Интерфейс корректно выглядит на desktop.
+- [x] ☐ Интерфейс корректно выглядит на mobile.
+- [x] ☐ Пустая форма регистрации показывает ошибки.
+- [x] ☐ Некорректный email показывает ошибку.
+- [x] ☐ Короткий пароль показывает ошибку.
+- [x] ☐ Разные пароли показывают ошибку.
+- [x] ☐ Реализован минимум один дополнительный интерактивный элемент на JavaScript.
+- [x] ☐ Актуальный код отправлен в Git.
+- [x] ☐ История Git содержит несколько осмысленных этапов разработки.
+- [x] ☐ Я могу объяснить основные части собственного HTML/CSS/JavaScript-кода.
